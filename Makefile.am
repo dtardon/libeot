@@ -26,6 +26,13 @@ eot2ttf_CFLAGS = $(release_flags)
 libeot_la_CFLAGS = $(release_flags)
 endif
 
+if BUILD_FUZZER
+noinst_PROGRAMS = eotfuzzer
+eotfuzzer_CPPFLAGS = -I$(top_srcdir)/inc
+eotfuzzer_LDADD = $(top_builddir)/libeot.la -lFuzzingEngine
+eotfuzzer_SOURCES = fuzz/eotfuzzer.cpp
+endif
+
 EXTRA_DIST = \
 	LICENSE \
 	PATENTS

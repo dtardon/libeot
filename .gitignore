@@ -12,6 +12,7 @@ compile
 config.*
 depcomp
 eot2ttf
+eotfuzzer
 missing
 install-sh
 a.out

@@ -14,9 +14,19 @@ esac],
 [debug=false])
 
 AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
+
+AC_ARG_ENABLE([fuzzer],
+    [AS_HELP_STRING([--enable-fuzzer], [Build fuzzer])],
+    [enable_fuzzer="$enableval"],
+    [enable_fuzzer=no]
+)
+AS_IF([test "$enable_fuzzer" = "yes"], [AC_LANG([C++])])
+AM_CONDITIONAL([BUILD_FUZZER], [test "$enable_fuzzer" = "yes"])
+
 OLD_CFLAGS=$CFLAGS
 AC_PROG_CC
 AM_PROG_CC_C_O
+AC_PROG_CXX
 CFLAGS=$OLD_CFLAGS
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
