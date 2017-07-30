@@ -1,7 +1,8 @@
 /****************************************************************************************/
 /*                                      LZCOMP.H                                        */
 /****************************************************************************************/
-#include "MTXMEM.H"
+
+#include <setjmp.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,7 +14,7 @@ typedef struct {
     /* private */
     /* State information for SaveBytes */
     unsigned char escape, count, state;
-    MTX_MemHandler *mem;
+    jmp_buf env;
     /* No public fields! */
 } RUNLENGTHCOMP;
 
@@ -27,7 +28,7 @@ unsigned char *MTX_RUNLENGTHCOMP_PackData( RUNLENGTHCOMP *t, unsigned char *data
 /* as it goes to the output memory. */
 void MTX_RUNLENGTHCOMP_SaveBytes( RUNLENGTHCOMP *t, unsigned char value, unsigned char * *dataOut, long *dataOutSize, long *index );
 #endif
-RUNLENGTHCOMP *MTX_RUNLENGTHCOMP_Create( MTX_MemHandler *mem  );
+RUNLENGTHCOMP *MTX_RUNLENGTHCOMP_Create();
 void MTX_RUNLENGTHCOMP_Destroy( RUNLENGTHCOMP *t );
 
 
@@ -66,7 +67,7 @@ typedef struct {
         long nextFreeNodeIndex;
         hasnNode *nodeBlock;
     #endif /* COMPRESS_ON */
-    MTX_MemHandler *mem;
+    jmp_buf *env;
     /* public */
     /* No public fields! */
 } LZCOMP;
@@ -88,8 +89,8 @@ typedef struct {
 #endif
 
 /* Constructors */
-LZCOMP *MTX_LZCOMP_Create1( MTX_MemHandler *mem  );
-LZCOMP *MTX_LZCOMP_Create2( MTX_MemHandler *mem, long maxCopyDistance );
+LZCOMP *MTX_LZCOMP_Create1( jmp_buf *env );
+LZCOMP *MTX_LZCOMP_Create2( long maxCopyDistance, jmp_buf *env );
 /* Destructor */
 void MTX_LZCOMP_Destroy( LZCOMP *t );
 

@@ -9,7 +9,6 @@
 
 #include <libeot/libeot.h>
 
-#include "MTXMEM.H"
 #include "BITIO.H"
 #include "AHUFF.H"
 #include "LZCOMP.H"
@@ -28,17 +27,13 @@ enum EOTError unpackMtx(struct Stream *buf, unsigned size, uint8_t **bufsOut, un
 	}
 	enum StreamResult sResult;
 	enum EOTError returnedStatus = EOT_SUCCESS;
-	MTX_MemHandler *mem = MTX_mem_Create(&malloc, &realloc, &free);
-	if (!mem)
-	{
-		goto CLEANUP;
-	}
-	LZCOMP *lzcomp = MTX_LZCOMP_Create1(mem);
+        jmp_buf env;
+	LZCOMP *lzcomp = MTX_LZCOMP_Create1(&env);
 	if (!lzcomp)
 	{
 		goto CLEANUP;
 	}
-        if (setjmp(mem->env) != 0)
+        if (setjmp(env) != 0)
         {
             returnedStatus = EOT_MTX_ERROR;
             goto CLEANUP;
@@ -75,7 +70,6 @@ enum EOTError unpackMtx(struct Stream *buf, unsigned size, uint8_t **bufsOut, un
 	}
 CLEANUP:
 	MTX_LZCOMP_Destroy(lzcomp);
-	free(mem);
 	return returnedStatus;
 }
 #ifdef LZCOMP_MAIN
@@ -90,9 +84,9 @@ int main(int argc, char **argv)
 		usage(argv[0]);
 		return 1;
 	}
-	MTX_MemHandler *mem = MTX_mem_Create(&malloc, &realloc, &free);
-	LZCOMP *lzcomp = MTX_LZCOMP_Create1(mem);
-        if (setjmp(mem->env) != 0)
+        jmp_buf env;
+	LZCOMP *lzcomp = MTX_LZCOMP_Create1(&env);
+        if (setjmp(env) != 0)
         {
             fprintf(stderr, "Decompression failed\n");
             return 1;

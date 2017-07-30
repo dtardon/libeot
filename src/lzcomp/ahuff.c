@@ -12,7 +12,6 @@
 
 #include "BITIO.H"
 #include "AHUFF.H"
-#include "MTXMEM.H"
 
 /* Returns number of bits used in the positive number x */
 long MTX_AHUFF_BitsUsed( register long x )
@@ -304,14 +303,13 @@ static short MapCodeToIndex( AHUFF *t, register short code )
 /* const short MAXWEIGHT = 30000; Max weight count before table reset */
 
 /* Constructor */
-AHUFF *MTX_AHUFF_Create( MTX_MemHandler *mem, BITIO *bio, short rangeIn ) 
+AHUFF *MTX_AHUFF_Create( BITIO *bio, short rangeIn ) 
 {
     short i, limit, range;
     long j;
     const short ROOT = 1;
     
-    AHUFF *t    = (AHUFF *)MTX_mem_malloc( mem, sizeof( AHUFF ) );
-    t->mem        = mem;
+    AHUFF *t    = (AHUFF *)malloc( sizeof( AHUFF ) );
     
     t->bio                = bio;
     range                = rangeIn;
@@ -331,9 +329,9 @@ AHUFF *MTX_AHUFF_Create( MTX_MemHandler *mem, BITIO *bio, short rangeIn )
     t->sym_count = 0;
     t->countA = t->countB = 100;
     /*t->symbolIndex = new short[ range ]; */
-    t->symbolIndex = ( short *)MTX_mem_malloc( mem, sizeof(short) * range );
+    t->symbolIndex = ( short *)malloc( sizeof(short) * range );
     /*t->tree  = new nodeType [ 2*range ]; */
-    t->tree  = (nodeType *)MTX_mem_malloc( mem, sizeof(nodeType) * 2*range );
+    t->tree  = (nodeType *)malloc( sizeof(nodeType) * 2*range );
 
     /* Initialize the Huffman tree */
 
@@ -392,9 +390,9 @@ AHUFF *MTX_AHUFF_Create( MTX_MemHandler *mem, BITIO *bio, short rangeIn )
 /* Deconstructor */
 void MTX_AHUFF_Destroy( AHUFF *t )
 {
-    MTX_mem_free( t->mem, t->symbolIndex );
-    MTX_mem_free( t->mem, t->tree );
-    MTX_mem_free( t->mem, t );
+    free( t->symbolIndex );
+    free( t->tree );
+    free( t );
 }
 
 

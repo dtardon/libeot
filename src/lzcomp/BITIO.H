@@ -1,7 +1,8 @@
 /****************************************************************************************/
 /*                                      BITIO.H                                         */
 /****************************************************************************************/
-#include "MTXMEM.H"
+
+#include <setjmp.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,7 +25,7 @@ typedef struct {
 
     char ReadOrWrite;
     
-    MTX_MemHandler *mem;  
+    jmp_buf *env;
     /* public */
     /* No public fields! */
 } BITIO;
@@ -49,7 +50,7 @@ long MTX_BITIO_GetBytesOut( BITIO *t ); /* Get method for the output byte count 
 long MTX_BITIO_GetBytesIn( BITIO *t );  /* Get method for the input byte count */
 
 /* Constructor for the new Memory based incarnation */
-BITIO *MTX_BITIO_Create( MTX_MemHandler *mem, void *memPtr, long memSize, const char param ); /* mem Pointer, current size, 'r' or 'w' */
+BITIO *MTX_BITIO_Create( void *memPtr, long memSize, const char param, jmp_buf *env ); /* mem Pointer, current size, 'r' or 'w' */
 /* Destructor */
 void MTX_BITIO_Destroy(BITIO *t);
 

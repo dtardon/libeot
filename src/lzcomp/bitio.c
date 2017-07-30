@@ -44,7 +44,7 @@ short MTX_BITIO_input_bit( register BITIO *t )
     if ( t->input_bit_count-- == 0 ) {
         t->input_bit_buffer = t->mem_bytes[ t->mem_index++ ];
         if ( t->mem_index > t->mem_size ) {
-            longjmp( t->mem->env, ERR_BITIO_end_of_file );
+            longjmp( *t->env, ERR_BITIO_end_of_file );
         }
         ++(t->bytes_in);
         t->input_bit_count = 7;
@@ -64,7 +64,7 @@ void MTX_BITIO_output_bit( register BITIO *t, unsigned long bit )
     if ( ++(t->output_bit_count) == 8 ) {
         if ( t->mem_index >=t->mem_size ) { /* See if we need more memory */
             t->mem_size += t->mem_size/2; /* Allocate in exponentially increasing steps */
-            t->mem_bytes = (unsigned char *)MTX_mem_realloc( t->mem, t->mem_bytes, t->mem_size );
+            t->mem_bytes = (unsigned char *)realloc( t->mem_bytes, t->mem_size );
         }
         t->mem_bytes[t->mem_index++] = (unsigned char)t->output_bit_buffer;
         t->output_bit_count = 0;
@@ -79,7 +79,7 @@ void MTX_BITIO_flush_bits( BITIO *t )
     if (t->output_bit_count > 0) {
         if ( t->mem_index >=t->mem_size ) {
             t->mem_size  = t->mem_index + 1;
-            t->mem_bytes = (unsigned char *)MTX_mem_realloc( t->mem, t->mem_bytes, t->mem_size );
+            t->mem_bytes = (unsigned char *)realloc( t->mem_bytes, t->mem_size );
         }
         t->mem_bytes[t->mem_index++] = (unsigned char)(t->output_bit_buffer << (8 - t->output_bit_count));
         t->output_bit_count = 0;
@@ -110,10 +110,10 @@ long MTX_BITIO_GetBytesIn( BITIO *t )
 
 
 /* Constructor for Memory based incarnation */
-BITIO *MTX_BITIO_Create( MTX_MemHandler *mem, void *memPtr, long memSize, const char param )
+BITIO *MTX_BITIO_Create( void *memPtr, long memSize, const char param, jmp_buf *env )
 {
-    BITIO *t    = (BITIO *)MTX_mem_malloc( mem, sizeof( BITIO ) );
-    t->mem        = mem;
+    BITIO *t    = (BITIO *)malloc( sizeof( BITIO ) );
+    t->env        = env;
     
     t->mem_bytes             = (unsigned char *)memPtr;
     t->mem_index             = 0;
@@ -139,5 +139,5 @@ void MTX_BITIO_Destroy(BITIO *t)
         MTX_BITIO_flush_bits(t);
         assert( t->mem_index == t->bytes_out );
     }
-    MTX_mem_free( t->mem, t );
+    free( t );
 }

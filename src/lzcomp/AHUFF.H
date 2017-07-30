@@ -1,7 +1,6 @@
 /****************************************************************************************/
 /*                                      AHUFF.H                                         */
 /****************************************************************************************/
-#include "MTXMEM.H"
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,7 +27,6 @@ typedef struct {
     long range;
     
     BITIO *bio;
-    MTX_MemHandler *mem;
 
     int maxSymbol;
     
@@ -47,7 +45,7 @@ long MTX_AHUFF_WriteSymbolCost( AHUFF *t, short symbol ); /* returns 16.16 bit c
 void MTX_AHUFF_WriteSymbol( AHUFF *t, short symbol ); 
 
 /* Constructor */
-AHUFF *MTX_AHUFF_Create( MTX_MemHandler *mem, BITIO *bio, short range );        /* [0 .. range-1] */
+AHUFF *MTX_AHUFF_Create( BITIO *bio, short range );        /* [0 .. range-1] */
 /* Destructor */
 void MTX_AHUFF_Destroy( AHUFF *t );
 
