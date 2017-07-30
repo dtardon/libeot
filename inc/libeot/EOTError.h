@@ -6,6 +6,10 @@
 #ifndef __LIBEOT_EOTERROR_H__
 #define __LIBEOT_EOTERROR_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define EOT_WARN 1000
 enum EOTError
 {
@@ -34,6 +38,11 @@ enum EOTError
   EOT_WARN_BAD_VERSION,
   EOT_WARN_NOT_ENOUGH_GLYPHS
 };
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* #define __LIBEOT_EOTERROR_H__ */
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

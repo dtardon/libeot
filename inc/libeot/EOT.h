@@ -11,6 +11,10 @@
 
 #include "EOTError.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct EUDCInfo
 {
   bool exists;
@@ -93,6 +97,10 @@ enum EOTError EOTfillMetadata(const uint8_t *bytes, unsigned bytesLength,
     struct EOTMetadata *out);
 void EOTfreeMetadata(struct EOTMetadata *toFree);
 bool EOTcanLegallyEdit(const struct EOTMetadata *metadata);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* #define __LIBEOT_EOT_H__ */
 
