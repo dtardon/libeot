@@ -699,6 +699,8 @@ enum EOTError populateGlyfAndLoca(struct SFNTTable *glyf, struct SFNTTable *loca
     enum EOTError result = decodeGlyph(streams, &sOut);
     if (result != EOT_SUCCESS)
     {
+      free(sOut.buf);
+      free(sLocaOut.buf);
       return result;
     }
     /* do padding */
