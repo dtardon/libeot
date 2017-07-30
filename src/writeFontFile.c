@@ -88,8 +88,8 @@ CLEANUP:
 enum EOTError writeFontFile(const uint8_t *font, unsigned fontSize, bool compressed, bool encrypted, FILE *outFile)
 {
   enum EOTError result;
-  uint8_t *finalBuf;
-  unsigned finalFontSize;
+  uint8_t *finalBuf = 0;
+  unsigned finalFontSize = 0;
   result = writeFontBuffer(font, fontSize, compressed, encrypted, &finalBuf, &finalFontSize);
   int itemsWritten = fwrite(finalBuf, 1, (long)finalFontSize, outFile);
   if (itemsWritten == finalFontSize)
