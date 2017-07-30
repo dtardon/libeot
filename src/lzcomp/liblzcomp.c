@@ -38,6 +38,11 @@ enum EOTError unpackMtx(struct Stream *buf, unsigned size, uint8_t **bufsOut, un
 	{
 		goto CLEANUP;
 	}
+        if (setjmp(mem->env) != 0)
+        {
+            returnedStatus = EOT_MTX_ERROR;
+            goto CLEANUP;
+        }
 	uint8_t versionMagic;
 	uint32_t offsets[3];
 	offsets[0] = 10;
@@ -87,6 +92,11 @@ int main(int argc, char **argv)
 	}
 	MTX_MemHandler *mem = MTX_mem_Create(&malloc, &realloc, &free);
 	LZCOMP *lzcomp = MTX_LZCOMP_Create1(mem);
+        if (setjmp(mem->env) != 0)
+        {
+            fprintf(stderr, "Decompression failed\n");
+            return 1;
+        }
 	FILE *in = fopen(argv[1], "rb");
 	if (in == NULL)
 	{
